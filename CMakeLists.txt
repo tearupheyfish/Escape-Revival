@@ -27,4 +27,5 @@ target_link_libraries(${PROJECT_NAME}
         PRIVATE Boost::boost
         )
 
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/workdir/source ${CMAKE_CURRENT_BINARY_DIR}/source)
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/workdir/source ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/source)
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/workdir/source ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/source)
