@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.26)
 project(EscapeReopen)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_BINARY_DIR ${PROJECT_SOURCE_DIR}/build)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR}/build_debug)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/build_release)
 
 add_compile_options(/utf-8 )#/FA
 
