@@ -15,7 +15,7 @@ protected:
     SDL_Event *event;                           //事件
     int mouse_x,mouse_y;                        //鼠标位置
     bool LeftClicked;                           //是否左键单击
-    const Uint8 *keystate;                      //按键
+    const Uint8 *keystate;                      //按键 快照，不用管
     
     Controller(View &vw);
     ~Controller();

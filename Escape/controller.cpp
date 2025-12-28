@@ -1,12 +1,6 @@
 #include "controller.hpp"
+#include "pool.hpp"
 
-extern bool isRunning;
-extern int game_state,last_state;
-extern SDL_Renderer *renderer;
-extern int progress;
-extern int h_score[5];
-extern TTF_Font *def_font_;
-extern SDL_Color def_clr;
 Uint8 last_press;                         //上一按键
 
 int repeat=0;
@@ -253,7 +247,10 @@ void LD_Controller::DrawWorld()
     SDL_RenderCopy(renderer, model->bg_picture, NULL, NULL);
     if(!(model->DisplayerMove()))
     {
-        model->score=SDL_CreateTextureFromSurface(renderer,TTF_RenderUTF8_Blended(model->sft,std::to_string(h_score[model->selected_level]).c_str(),model->clr));
+        SDL_DestroyTexture(model->score);
+        auto ttf_suf = TTF_RenderUTF8_Blended(model->sft,std::to_string(h_score[model->selected_level]).c_str(),model->clr);
+        model->score=SDL_CreateTextureFromSurface(renderer, ttf_suf);
+        SDL_FreeSurface(ttf_suf);
         model->sc.w=std::to_string(h_score[model->selected_level]).size()*40;
             SDL_RenderCopy (renderer,model->score, NULL, &model->sc);
     }
@@ -325,11 +322,11 @@ void DN_Controller::TickControll()          //LevelI Tick函数
         model->cast[0]->buff[0]=120;
     }
     //吃豆检测
-    Actor *bl;
+
     for(int i=(int)model->cast[0]->posit_y-1;i<(int)model->cast[0]->posit_y+1;++i)
         for(int j=(int)model->cast[0]->posit_x-1;j<(int)model->cast[0]->posit_x+1;++j)
         {
-            bl=model->map[i][j].blind;
+            Actor *bl=model->map[i][j].blind;
             if(bl&&isRunInto(*bl,*model->cast[0]))
             {
                 delete bl;
@@ -338,9 +335,10 @@ void DN_Controller::TickControll()          //LevelI Tick函数
                 
                 model->r_bean_title=std::to_string(model->remain_bean);
                 SDL_Texture *replace[2];//可以考虑作为长生存周期变量
-                replace[0]=SDL_CreateTextureFromSurface(renderer,TTF_RenderUTF8_Blended(model->r_bean_ft, model->remain_bean?model->r_bean_title.c_str():"Run!",model->r_bean_clr));
+                auto ttf_suf = TTF_RenderUTF8_Blended(model->r_bean_ft, model->remain_bean?model->r_bean_title.c_str():"Run!",model->r_bean_clr);
+                replace[0]=SDL_CreateTextureFromSurface(renderer, ttf_suf);
                 replace[1]=nullptr;
-                model->bu_ist[2]->changeSTT(&replace);
+                model->bu_ist[2]->changeSTT(replace);
             }
         }
     //碰撞检测

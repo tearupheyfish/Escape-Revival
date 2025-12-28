@@ -13,7 +13,7 @@ class Actor;
 class View
 {
     Model *model;
-    SDL_Texture *little_beans;
+    SDL_Texture *little_beans;  //资源池，不用管
 public:
 //    std::vector<Button *> *DropInButton(Game &gm);//???
     View(Model &game);

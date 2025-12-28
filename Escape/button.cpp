@@ -1,7 +1,5 @@
 #include "button.hpp"
-#include <cstring>
-extern SDL_Color def_clr;
-extern SDL_Renderer *renderer;
+#include "pool.hpp"
 
 bool Button::Betouched(int mouse_x, int mouse_y)
 {
@@ -26,15 +24,29 @@ height_rate(0.7),width_rate(0.8),
 title_size(strlen(title)),
 identity(id)
 {
-    this->title[0]=SDL_CreateTextureFromSurface(renderer,TTF_RenderUTF8_Blended(ft, title,color));
-    if(memcmp((const void *)&color,(const void *)&touch,sizeof(SDL_Color)))
-        this->title[1]=SDL_CreateTextureFromSurface(renderer, TTF_RenderUTF8_Blended(ft,title,touch));
-    else
-        this->title[1]=this->title[0];
+    auto ttf_suf = TTF_RenderUTF8_Blended(ft, title,color);
+    this->title[0]=SDL_CreateTextureFromSurface(renderer,ttf_suf);
+    SDL_FreeSurface(ttf_suf);
+
+    ttf_suf = TTF_RenderUTF8_Blended(ft,title,touch);
+    // if(memcmp((const void *)&color,(const void *)&touch,sizeof(SDL_Color)))
+        this->title[1]=SDL_CreateTextureFromSurface(renderer, ttf_suf);
+    // else
+    //     this->title[1]=this->title[0];
+    SDL_FreeSurface(ttf_suf);
+
     back_ground[0]=bg,back_ground[1]=bgt;
     ofPicture.x=p_x,ofPicture.y=p_y;
     ofPicture.w=picture_width,ofPicture.h=picture_height;
     SortOut();
+}
+
+Button::~Button()
+{
+    // for (auto &texture : back_ground)
+    //     SDL_DestroyTexture(texture);
+    // for (auto &font : title)
+    //     SDL_DestroyTexture(font);
 }
 
 void Button::SortOut()              //按钮居中对齐
@@ -65,16 +77,16 @@ void Button::setCanBeTouched(bool bl)//设置按钮是否可被触碰
     canBetouch=bl;
 }
 
-void Button::changeSTT(SDL_Texture *(*replace)[2])
+void Button::changeSTT(SDL_Texture ** replace)
 {
-    if((*replace)[0])
+    if(replace[0])
     {
-//        delete title[0];
-        title[0]=(*replace)[0];
+        SDL_DestroyTexture(title[0]);
+        title[0]=replace[0];
     }
-    if((*replace)[1])
+    if(replace[1])
     {
-//        delete title[1];
-        title[1]=(*replace)[1];
+        SDL_DestroyTexture(title[1]);
+        title[1]=replace[1];
     }
 }

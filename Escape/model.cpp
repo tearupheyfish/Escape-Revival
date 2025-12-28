@@ -1,31 +1,14 @@
 #include "model.hpp"
-
+#include "actor.hpp"
+#include "pool.hpp"
 #include <random>
 
-extern SDL_Window *window;
-extern SDL_Renderer *renderer;
-extern TTF_Font* def_font_;
-extern SDL_Color def_clr;
-extern ResourcePool image_pool_;
 
-SDL_Texture* ResourcePool::FindResource(std::string key)        //加载纹理
+block::~block()
 {
-    u_m::iterator it=DOM.find(key);
-    if(it!=DOM.end())
-        return it->second;
-    else
-    {
-        surf=IMG_Load(key.c_str());
-        if(!surf)
-        {
-            std::cerr<<"surface read failure: "<<key<<".ErrorInfo: "<<SDL_GetError();
-        }
-        tet=SDL_CreateTextureFromSurface(renderer, surf);
-        DOM.insert(std::pair<std::string,SDL_Texture*>{key,tet});
-        SDL_FreeSurface(surf);
-        return tet;
-    }
-};
+    // SDL_DestroyTexture(skin);
+    delete mob;
+}
 
 Model::Model(int type,block *mp):                         //模型基类构造
 bg_picture(nullptr),
@@ -254,6 +237,8 @@ r_bean_title(std::to_string(remain_bean))
                 ++remain_bean;
         }
     }
+    dawn_map.close();
+
     //计算度
     for(int j,i=0;i<30;i++)
     {
@@ -268,8 +253,7 @@ r_bean_title(std::to_string(remain_bean))
             }
         }
     }
-    dawn_map.close();
-    
+
     //放置生物
 //    srand((int)time(0));
 

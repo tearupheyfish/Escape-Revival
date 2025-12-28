@@ -6,35 +6,26 @@
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 
-extern int progress;                                //全局进度
+#include "pool.hpp"
+
 int progress;
 
-extern int h_score[5];                              //全局关卡分数
 int h_score[5];
 
-extern TTF_Font *def_font_;                         //全局默认字体
-TTF_Font *def_font_;
+TTF_Font *def_font_;//全局默认字体
 
-extern SDL_Color def_clr;                           //全局默认色
 SDL_Color def_clr={255,255,255,200};
-//全局窗口长宽
-extern const int WINDOWS_WIDTH;
-extern const int WINDOWS_HEIGHT;
+
 const int WINDOWS_WIDTH=1200;
 const int WINDOWS_HEIGHT=900;
 
-extern SDL_Window* windows;                         //全局窗口
-extern SDL_Renderer *renderer;                      //全局渲染器
 SDL_Window *windows;
 SDL_Renderer *renderer;
 
-extern ResourcePool image_pool_;                    //图片资源池
 ResourcePool image_pool_;
 
-extern bool isRunning;                              //全局游戏运行标记
 bool isRunning=true;
 
-extern int game_state,last_state;                   //全局游戏模式标记、上一帧模式标记
 int game_state=MAINMENU,last_state=DAWN;
 
 void Init();
@@ -51,7 +42,7 @@ int main(/*int argc, const char * argv[]*/)
     GameLoop(mode_list);    //循环核心
     
     GameQuit();             //退出
-    
+
     return 0;
 }
 
@@ -151,13 +142,12 @@ void GameLoop(Game *mode_list[])
             }
             default:                        //正常切换
                 //若切换了游戏状态
-                if(last_state^game_state&&game_state^MAINMENU&&game_state^PAUSEMENU&&game_state^LOADMENU)
+                if(last_state^game_state/*!=*/&&game_state^MAINMENU&&game_state^PAUSEMENU&&game_state^LOADMENU)
                 {
                     if(game_state>last_state)
                         progress=game_state;
                     //销毁上一段游戏
                     delete mode_list[last_state];
-                    mode_list[last_state]=nullptr;
                     //新建下一段游戏
                     switch (game_state)
                     {

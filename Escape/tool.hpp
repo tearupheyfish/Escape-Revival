@@ -4,14 +4,18 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
-class Skill
+class Tool
+{
+};
+
+class Skill:public Tool
 {
 public:
     int type;
     double rate;
     double fix_speed;
     SDL_Rect from;
-    SDL_Texture *skill_picture;
+    SDL_Texture *skill_picture;     //资源池，不用管
     
     Skill(int tp);
 };

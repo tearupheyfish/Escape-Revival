@@ -2,10 +2,9 @@
 #define model_hpp
 
 #include <SDL2/SDL.h>
-#include <iostream>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <fstream>
+
 #include <string>
 #include <ctime>
 
@@ -19,13 +18,15 @@ class ResourcePool;
 #define LOCATE(a/*行序*/,b/*列序*/,w/*边长*/) +((a))*(w)+(b) //二维方式取一维数组值，参数
 enum{MAINMENU=0,PAUSEMENU,LOADMENU,DAWN,LOVE,HOME,ALONE,FIGHT};
 
-struct block                            //基本地图单元
+class block                            //基本地图单元
 {
+public:
     int flag;
     int degree=0;                         //度
-    SDL_Texture *skin;                  //地图贴图
-    Actor *blind;
+    SDL_Texture *skin;                  //地图贴图，资源池，不能杀
+    Actor *blind;                       //资源池，不能杀
     Furniture *mob;
+    ~block();
 };
 
 struct fee                              //搜索费用结构体
@@ -38,15 +39,24 @@ class Model                             //--模型基类
 public:
     int flag;                           //模型标记
     int width;
-    block *map;
-    SDL_Texture *bg_picture;            //背景图像
-    std::vector<Furniture **> mo_ist;   //器具表列
+    block *map;                         //不用管
+    SDL_Texture *bg_picture;            //背景图像 资源池，不能杀
+    std::vector<Furniture **> mo_ist;   //器具表列 引用，不用管
     std::vector<Actor *> cast;          //演员表列
     std::vector<Button *> bu_ist;       //按钮表列
     Skill *skills[2];
     
     Model(int type,block *map);
-    virtual ~Model()=default;
+    virtual ~Model()
+    {
+        // SDL_DestroyTexture(bg_picture);
+        for (auto actor : cast)
+            delete actor;
+        for (auto& button : bu_ist)
+            delete button;
+        for (auto &skill : skills)
+            delete skill;
+    }
     void FindWay(Actor *atr,block *map,Uint8 width);//路径搜索算法
     void InsertPoint(std::vector<SDL_Point> &list,SDL_Point t,const std::vector<std::vector<fee>>& t_map,int width);//搜索算法中插入队列
 //    virtual void RecognizeMap(block &map_unit,int i,int j,std::ifstream &dawn_map)=0;//从文件造图
@@ -66,7 +76,7 @@ public:
     SDL_Color touched,origin;           //两种颜色
     
     MM_Model();
-    ~MM_Model()=default;
+    ~MM_Model() override =default;
     void RecognizeMap(block &map_unit, int i, int j, std::ifstream &dawn_map) {};
 };
 
@@ -77,24 +87,29 @@ public:
     SDL_Color touched,origin;           //两种颜色
     
     PA_Model();
-    ~PA_Model()=default;
+    ~PA_Model() override =default;
     void RecognizeMap(block &map_unit, int i, int j, std::ifstream &dawn_map) {};
 };
 
 class LD_Model:public Model             //加载菜单模型
 {
 public:
-    SDL_Texture *score;
+    SDL_Texture *score;         //需要时自己会处理
     int selected_level;
     int display_posit;
-    SDL_Texture* picture[5];
-    SDL_Texture* undentifined;
+    SDL_Texture* picture[5];    //资源池不要动
+    SDL_Texture* undentifined; //这个也不能杀
     SDL_Rect print;
     TTF_Font *sft;
     SDL_Color clr;
     SDL_Rect sc;
     
     LD_Model();
+    ~LD_Model() override
+    {
+        SDL_DestroyTexture(score);
+        TTF_CloseFont(sft);
+    }
     void RecognizeMap(block &map_unit, int i, int j, std::ifstream &dawn_map) {};
     bool DisplayerMove();
 };
@@ -103,7 +118,7 @@ class Ct_Model:public Model
 {
 public:
     Ct_Model();
-    ~Ct_Model()=default;
+    ~Ct_Model() override =default;
     void RecognizeMap(block &map_unit, int i, int j, std::ifstream &dawn_map){};
 };
 
@@ -119,7 +134,10 @@ public:
     std::string r_bean_title;           //计数器文字
     
     DN_Model();
-    ~DN_Model()=default;
+    ~DN_Model() override
+    {
+        TTF_CloseFont(r_bean_ft);
+    }
     void RecognizeMap(block &map_unit,int i,int j,std::ifstream &dawn_map);
     bool IsPassable(block *area)override;
 };

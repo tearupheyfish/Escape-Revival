@@ -1,7 +1,6 @@
 #include "actor.hpp"
-
-extern ResourcePool image_pool_;
-extern SDL_Renderer *renderer;
+#include "tool.hpp"
+#include "pool.hpp"
 
 /*演员/实体*/
 Actor::Actor(double x,double y,SDL_Texture *clo,int type):            //演员基类构造
@@ -44,6 +43,14 @@ Actor(x,y,image_pool_.FindResource(( "./source/images/man.png")),PLAYER)
 {
     physique=0.4;
     speed=0.05*iscontrolled;
+}
+
+Player::~Player()
+{
+    for (auto tool : backpack)
+    {
+        delete tool;
+    }
 }
 
 void Player::Action()

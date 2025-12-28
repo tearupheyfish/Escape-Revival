@@ -21,7 +21,7 @@ class MainMenu:public Game          //-主菜单
 public:
     MainMenu();
     void RunGame() override;
-    ~MainMenu()=default;
+    ~MainMenu() override =default;
     
 };
 
@@ -64,7 +64,7 @@ public:
     LV_Controller controller;
     View view;
     Love();
-    ~Love()=default;
+    ~Love() override =default;
     void RunGame() override;
 };
 
@@ -76,7 +76,7 @@ public:
     View view;
     
     Home();
-    ~Home()=default;
+    ~Home() override =default;
     void RunGame() override;
 };
 #endif /* Game_hpp */

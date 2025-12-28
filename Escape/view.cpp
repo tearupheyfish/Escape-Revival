@@ -1,13 +1,6 @@
 
 #include "view.hpp"
-
-extern const int WINDOWS_WIDTH;
-extern const int WINDOWS_HEIGHT;
-extern SDL_Renderer *renderer;
-extern TTF_Font *def_font_;
-extern SDL_Color def_clr;
-extern int h_score[5];
-extern ResourcePool image_pool_;
+#include "pool.hpp"
 
 const double half_display_width=3.75;
 const int base_len=120;
@@ -46,8 +39,10 @@ view(model)
                 if(!(tick%10))
                 {
                     clr.g=255*tick*u_score/100,clr.r=255-clr.g;
-                    replace[0]=SDL_CreateTextureFromSurface(renderer,TTF_RenderUTF8_Blended(def_font_, ("得分:  "+std::to_string((int)(u_score*tick))).c_str(),clr));
-                    model.bu_ist[1]->changeSTT(&replace);
+                    auto suf = TTF_RenderUTF8_Blended(def_font_, ("得分:  "+std::to_string((int)(u_score*tick))).c_str(),clr);
+                    replace[0]=SDL_CreateTextureFromSurface(renderer, suf);
+                    SDL_FreeSurface(suf);
+                    model.bu_ist[1]->changeSTT(replace);
                 }
                 
                 view.DrawWorld();
@@ -115,7 +110,7 @@ view(model)
             while(tick--)
             {
                 SDL_RenderClear(renderer);
-                SDL_PollEvent(NULL);
+                SDL_PollEvent(nullptr);
                 SDL_RenderPresent(renderer);
             }
         }

@@ -16,26 +16,11 @@ class ResourcePool;
 
 enum{BEAN,PLAYER=0,DOG,CAT};
 
-class ResourcePool                      //资源池
-{
-    using u_m=std::unordered_map<std::string,SDL_Texture*>;
-    u_m DOM;
-    SDL_Surface *surf;
-    SDL_Texture *tet;
-public:
-    SDL_Texture* FindResource(std::string key);
-};
-
-class ResourcePool_2
-{
-    using s_u_m=std::unordered_map<std::string,SDL_Texture*>;
-};
-
 class Actor                             //--演员基类
 {
 public:
     int actor_type;                     //类型标记
-    SDL_Texture *clothes;               //俯视图片
+    SDL_Texture *clothes;               //俯视图片 资源池，不用管
     double posit_x,posit_y;             //相对地图的绝对坐标(演员中心)
     double direction,face_direc;        //移动方向、面朝朝向 遵从向上为0，顺时针为正，度数制
     double speed;                       //移动速度
@@ -44,7 +29,6 @@ public:
     int buff[5];
     
     Actor(double x,double y,SDL_Texture *clo,int type);
-    virtual ~Actor()=default;
     virtual void Action()=0;
     void TurnAround();                  //调整面部朝向向行动方向靠拢
     void TrunCircle(double degree);     //转圈圈
@@ -56,11 +40,12 @@ protected:
 class Player:public Actor               //-玩家
 {
 public:
-    std::vector<Tool *> backpagk;       //背包
+    std::vector<Tool *> backpack;       //背包
     bool iscontrolled;                  //是否被控制
     
     Player(double x,double y);
-    ~Player()=default;
+    ~Player();
+
     void Action()override;
     void ProvidePath(SDL_Point *&path, SDL_Point &p, int &mode, int &path_len) override{}
 };
@@ -125,11 +110,13 @@ class Furniture
 public:
     bool bedraw;
     int fn_type;
-    SDL_Texture *picture;
+    SDL_Texture *picture;   //池子找的，不能杀
     int facing;
     double posit_x,posit_y;
     double width,height;
     Furniture(double x,double y,SDL_Texture *p,int type);
+
+    virtual ~Furniture() = default;
     virtual void Action()=0;
 };
 
