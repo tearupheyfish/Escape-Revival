@@ -1,12 +1,13 @@
 #define SDL_MAIN_HANDLED
 
-#include <iostream>
-//#include <SDL2/SDL_filesystem.h>
 #include "Game.hpp"
+#include "pool.hpp"
+
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 
-#include "pool.hpp"
+#include <iostream>
+#include <fstream>
 
 int progress;
 

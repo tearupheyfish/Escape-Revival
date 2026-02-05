@@ -19,6 +19,7 @@ SDL_Texture* ResourcePool::FindResource(std::string key)        //加载纹理
     else
     {
         SDL_Surface *surf;
+
         surf=IMG_Load(key.c_str());
         if(!surf)
         {
@@ -26,6 +27,7 @@ SDL_Texture* ResourcePool::FindResource(std::string key)        //加载纹理
         }
         auto tet=SDL_CreateTextureFromSurface(renderer, surf);
         DOM.insert(std::pair<std::string,SDL_Texture*>{key,tet});
+
         SDL_FreeSurface(surf);
         return tet;
     }

@@ -36,6 +36,8 @@ void Controller::TickControll()             //基类Tick函数
             case SDL_MOUSEBUTTONDOWN:
                 LeftClicked=SDL_GetMouseState(nullptr, nullptr)&SDL_BUTTON(SDL_BUTTON_LEFT);
                 break;
+        case SDL_QUIT:
+            isRunning =false;
             default:;
         }
     }
